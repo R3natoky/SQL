@@ -20,92 +20,107 @@ GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
 	WHERE name='CLIENTE' and xtype = 'u') )
-
-	DROP TABLE dbo.CLIENTE;
+BEGIN
+	DROP TABLE dbo.CLIENTE
+END;
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[UBICACION]' and xtype = 'u') )
-
-	DROP TABLE dbo.[UBICACION];
+	WHERE name='UBICACION' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.UBICACION;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[PROYECTO]' and xtype = 'u') )
-
-	DROP TABLE dbo.[PROYECTO];
+	WHERE name='PROYECTO' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.PROYECTO;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[COMPONENTE]' and xtype = 'u') )
-
-	DROP TABLE dbo.[COMPONENTE];
+	WHERE name='COMPONENTE' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.COMPONENTE;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[ENTREGABLE]' and xtype = 'u') )
-
-	DROP TABLE dbo.[ENTREGABLE];
+	WHERE name='ENTREGABLE' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.ENTREGABLE;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[PARTIDA]' and xtype = 'u') )
-
-	DROP TABLE dbo.[PARTIDA];
+	WHERE name='PARTIDA' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.PARTIDA;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[EQUIPO]' and xtype = 'u') )
-
-	DROP TABLE dbo.[EQUIPO];
+	WHERE name='EQUIPO' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.EQUIPO;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[PARTE_EQUIPOS]' and xtype = 'u') )
-
-	DROP TABLE dbo.[PARTE_EQUIPOS];
+	WHERE name='PARTE_EQUIPOS' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.PARTE_EQUIPOS;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[Detalle_Parte]' and xtype = 'u') )
-
-	DROP TABLE dbo.[Detalle_Parte];
+	WHERE name='Detalle_Parte' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.Detalle_Parte;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[MATERIALES]' and xtype = 'u') )
-
-	DROP TABLE dbo.[MATERIALES];
+	WHERE name='MATERIALES' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.MATERIALES;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[NOTA_ALMACEN]' and xtype = 'u') )
-
-	DROP TABLE dbo.[NOTA_ALMACEN];
+	WHERE name='NOTA_ALMACEN' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.NOTA_ALMACEN;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[Detalle_Almacen]' and xtype = 'u') )
-
-	DROP TABLE dbo.[Detalle_Almacen];
+	WHERE name='Detalle_Almacen' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.Detalle_Almacen;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[PERSONAL]' and xtype = 'u') )
-
-	DROP TABLE dbo.[PERSONAL];
+	WHERE name='PERSONAL' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.PERSONAL;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[TAREO_MO]' and xtype = 'u') )
-
-	DROP TABLE dbo.[TAREO_MO];
+	WHERE name='TAREO_MO' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.TAREO_MO;
+END
 GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='[Detalle_Tareo]' and xtype = 'u') )
-
-	DROP TABLE dbo.[Detalle_Tareo];
+	WHERE name='Detalle_Tareo' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.Detalle_Tareo;
+END
 GO
 
 ---===============================================
@@ -202,7 +217,7 @@ CREATE TABLE [EQUIPO]
 	[Familia]            varchar(20)  NULL ,
 	[Modelo]             varchar(20)  NULL ,
 	[Registro_Placa]     varchar(20)  NULL ,
-	[Costo]              float  NULL ,
+	[Costo]              money  NULL ,
 	[Unidad]             varchar(5)  NULL 
 )
 go
@@ -211,8 +226,8 @@ CREATE TABLE [PARTE_EQUIPOS]
 ( 
 	[Id_Parte]           integer  NOT NULL ,
 	[Id_Equipo]          varchar(20)  NOT NULL ,
-
-	[Fecha]              datetime  NULL ,
+	[Id_Partida]         varchar(20)  NOT NULL ,
+	[Fecha]              date  NULL ,
 	[Nro_doc]            varchar(20)  NULL ,
 )
 go
@@ -222,8 +237,8 @@ CREATE TABLE [Detalle_Parte]
 	[Id_Parte]           integer  NOT NULL ,
 	[Id_Equipo]          varchar(20)  NOT NULL ,
 
-	[Inicio]             int  NULL ,
-	[Fin]                int  NULL ,
+	[Inicio]             NUMERIC(10,2) NULL ,
+	[Fin]                NUMERIC(10,2)  NULL ,
 	[Cantidad]           AS [Fin]-[Inicio],
 	[Und]                char(5)  NULL ,
 	[Trabajo]            varchar(120)  NULL ,
@@ -242,9 +257,9 @@ CREATE TABLE [MATERIALES]
 
 	[Descripcion]        varchar(20)  NULL ,
 	[Und]                char(5)  NULL ,
-	[Stock]              float  NULL ,
+	[Stock]              NUMERIC(10,2)  NULL ,
 	[Almacen]            varchar(20)  NULL ,
-	[PU]                 float  NULL 
+	[PU]                 money  NULL 
 )
 go
 
@@ -253,7 +268,7 @@ CREATE TABLE [NOTA_ALMACEN]
 	[Id_Nota]            varchar(20)  NOT NULL ,
 	[Id_Partida]         varchar(20)  NOT NULL ,
 
-	[Fecha]              datetime  NULL ,
+	[Fecha]              date  NULL ,
 	[Nro_Doc]            varchar(20)  NULL ,
 )
 go
@@ -263,7 +278,7 @@ CREATE TABLE [Detalle_Almacen]
 	[Id_Nota]            varchar(20)  NOT NULL ,
 	[Id_Material]        varchar(20)  NOT NULL ,
 
-	[Cantidad]           float  NULL ,
+	[Cantidad]           NUMERIC(10,2)  NULL ,
 
 )
 go
@@ -287,7 +302,7 @@ CREATE TABLE [PERSONAL]
 	[Categoria]          varchar(20)  NULL ,
 	[Nro_Orden]          int  NULL ,
 	[DNI]                int  NULL ,
-	[Salario]            float  NULL 
+	[Salario]            money  NULL 
 )
 go
 
@@ -295,9 +310,9 @@ go
 CREATE TABLE [TAREO_MO]
 ( 
 	[Id_Tareo]           varchar(20)  NOT NULL ,
-	[Id_Entregable]      varchar(20)  NOT NULL ,
+	[Id_Partida]		 varchar(20)  NOT NULL ,
 
-	[Fecha]              datetime  NULL ,
+	[Fecha]              date  NULL ,
 	[Nro_Docummento]     varchar(20)  NULL 
 )
 go
@@ -307,8 +322,8 @@ CREATE TABLE [Detalle_Tareo]
 	[Id_Tareo]           varchar(20)  NOT NULL ,
 	[Id_Personal]        varchar(20)  NOT NULL,
 
-	[Ingreso]            datetime  NULL ,
-	[Salida]             datetime  NULL ,
+	[Ingreso]            numeric(3,2)  NULL ,
+	[Salida]             numeric(3,2)  NULL ,
 	[HH]                 AS [Ingreso]-[Salida],
 	[HE]                 float  NULL ,
  
