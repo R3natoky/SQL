@@ -5,13 +5,13 @@
 USE master;
 GO
 
-IF( NOT EXISTS ( SELECT 1 FROM sys.sysdatabases WHERE name='PROYECTOS' ) )
+IF( NOT EXISTS ( SELECT 1 FROM sys.sysdatabases WHERE name='PROYECTOS FINAL' ) )
 BEGIN
-	CREATE DATABASE PROYECTOS;
+	CREATE DATABASE [PROYECTOS FINAL];
 END;
 GO
 
-USE PROYECTOS;
+USE [PROYECTOS FINAL];
 GO
 
 -- ======================================================
@@ -38,11 +38,15 @@ BEGIN
 	DROP TABLE dbo.PROYECTO;
 END
 GO
+---========================================
+---BORRAR TABLAS EXISTENTES EN CASCADA
+---EMPEZANDO DE ABAJO
+---========================================
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='COMPONENTE' and xtype = 'u') )
+	WHERE name='PARTIDA' and xtype = 'u') )
 BEGIN
-	DROP TABLE dbo.COMPONENTE;
+	DROP TABLE dbo.PARTIDA;
 END
 GO
 
@@ -51,12 +55,23 @@ IF( EXISTS ( SELECT 1 FROM sys.sysobjects
 BEGIN
 	DROP TABLE dbo.ENTREGABLE;
 END
-GO
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='PARTIDA' and xtype = 'u') )
+	WHERE name='COMPONENTE' and xtype = 'u') )
 BEGIN
-	DROP TABLE dbo.PARTIDA;
+	DROP TABLE dbo.COMPONENTE;
+END
+GO
+
+---========================================
+---BORRAR TABLAS EXISTENTES EN CASCADA
+---EMPEZANDO DE ABAJO
+---========================================
+
+IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
+	WHERE name='Detalle_Parte' and xtype = 'u') )
+BEGIN
+	DROP TABLE dbo.Detalle_Parte;
 END
 GO
 
@@ -74,12 +89,7 @@ BEGIN
 END
 GO
 
-IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
-	WHERE name='Detalle_Parte' and xtype = 'u') )
-BEGIN
-	DROP TABLE dbo.Detalle_Parte;
-END
-GO
+
 
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
 	WHERE name='MATERIALES' and xtype = 'u') )
@@ -125,118 +135,122 @@ GO
 
 ---===============================================
 ---GENERAR TABLAS GRUPO PROYECTO
---- Se corrige int por bigint en RUC
---- Se reordeno ubicacion de algunas columnas
 ---===============================================
 
 CREATE TABLE [CLIENTE]
 ( 
-	[Id_Cliente]         integer  NOT NULL ,
+	[Id_Cliente]         integer NOT NULL ,
 
-	[Nombre_Empresa]     varchar(200)  NULL ,
-	[N_Contacto]         varchar(50)  NULL ,
-	[Tel_Contacto]       varchar(20)  NULL ,
-	[RUC]                bigint  NULL
+	[RUC]                bigint  NULL,
+	[Nombre_Empresa]     varchar(MAX)  NULL ,
+	[N_Contacto]         varchar(MAX)  NULL ,
+	[Tel_Contacto]       varchar(20)  NULL 
+
 )
 go
 
-CREATE TABLE [UBICACION]
+CREATE TABLE [UBIGEO]
 ( 
-	[UBIGEO]             integer  NOT NULL,
+	[ID_UBIGEO]             integer  NOT NULL,
 
-	[DIRECCION]          varchar(200)  NULL ,
-	[REGION]             varchar(120)  NULL ,
-	[PROVINCIA]          varchar(120)  NULL ,
-	[DISTRITO]           varchar(120)  NULL
+	[REGION]             varchar(MAX)  NULL ,
+	[PROVINCIA]          varchar(MAX)  NULL ,
+	[DISTRITO]           varchar(MAX)  NULL
 )
 go
 
 CREATE TABLE [PROYECTO]
 ( 
-	[Id_Proyecto]        varchar(120)  NOT NULL ,
-	[Id_Cliente]         integer  NOT NULL ,
-	[UBIGEO]             integer  NOT NULL ,
+	[Id_Proyecto]        varchar(20)	NOT NULL ,
+	[Id_Cliente]         integer	NOT NULL ,
+	[UBIGEO]             integer		NOT NULL ,
 	
-	[Nombre]             varchar(200)  NULL ,
-	[Monto_Obra]         varchar(20)  NULL 
+	[Nombre]				varchar(MAX)	NULL ,
+	[Direccion_Proyecto]	varchar(MAX)	NULL ,
+	[Monto_Presupuestado]   float			NULL ,
+	[Monto_Costo_Real]		float			NULL ,
+	[Estado]				varchar(MAX)	NULL ,
+	[Fecha_Estado]			date			NULL ,
+	[Fecha_Incio]			date			NULL ,
+	[Fecha_Finalizado]		date			NULL 
 )
 go
 
 ---===============================================
 ---GENERAR TABLAS GRUPO PRESUPUESTO
---- Se eliman FK que no necesito
---- [Monto_Componente] debe llenarse con una consulta
---- de actualizacion de [Monto] 
---- [Monto] debe llenarse con una consulta de actualizacion
---- de [Costo_Parcial]
 ---===============================================
 
 CREATE TABLE [COMPONENTE]
 ( 
-	[Id_Componente]      varchar(20)  NOT NULL ,
-	[Id_Proyecto]        varchar(120)  NOT NULL ,
+	[Id_Componente]      varchar(20)		NOT NULL ,
+	[Id_Proyecto]        varchar(20)	NOT NULL ,
 	
-	[Descripcion_Componente] varchar(120)  NULL ,
-	[Monto_Componente]   float  NULL 
+	[Cod_Componente]			varchar(MAX)	NULL,
+	[Descripcion_Componente]	varchar(MAX)	NULL ,
+	[Monto_Componente]			float		NULL 
 )
 go
 
 CREATE TABLE [ENTREGABLE]
 ( 
-	[Id_Entregable]      varchar(20)  NOT NULL ,
-	[Id_Componente]      varchar(20)  NOT NULL ,
+	[Id_Entregable]      varchar(20)	NOT NULL ,
+	[Id_Componente]      varchar(20)	NOT NULL ,
 	
-	[Descripcion_Entregable] varchar(160)  NULL ,
-	[Monto]              float  NULL 
+	[Cod_Entregable]			varchar(MAX)	NULL,
+	[Descripcion_Entregable]	varchar(MAX)  NULL ,
+	[Monto_Entregable]          float  NULL 
 )
 go
 
 CREATE TABLE [PARTIDA]
 ( 
-	[Id_Partida]         varchar(20)  NOT NULL ,
-	[Id_Entregable]      varchar(20)  NOT NULL ,
+	[Id_Partida]         varchar(20)		NOT NULL ,
+	[Id_Entregable]      varchar(20)		NOT NULL ,
 	
-	[Descripcion_Partida] varchar(160)  NULL ,
-	[Metrado]            float  NULL ,
-	[Und]                char(5)  NULL ,
-	[P.U.]               float  NULL ,
-	[Costo_Parcial]      AS   [Metrado]*[P.U.]
+	[Cod_Partida]			varchar(MAX)	NULL,
+	[Descripcion_Partida]	varchar(MAX)	NULL ,
+	[Metrado]				float			NULL ,
+	[Und]					char(5)			NULL ,
+	[PU]					float			NULL ,
+	[Costo_Parcial]			AS   [Metrado]*[PU],
+	[Estado_Partida]		varchar(MAX)	NULL,
+	[Fecha_Estado_Partida]  date			NULL
+
 )
 go
 
 ---===============================================
 ---GENERAR TABLAS GRUPO EQUIPOS
----Se corrigio tipo int a float en [Costo]
---- Se define [Cantidad]=[Fin]-[Inicio]
+
 ---===============================================
 
 CREATE TABLE [EQUIPO]
 ( 
 	[Id_Equipo]          varchar(20)  NOT NULL ,
 
-	[Familia]            varchar(20)  NULL ,
-	[Modelo]             varchar(20)  NULL ,
-	[Registro_Placa]     varchar(20)  NULL ,
-	[Costo]              money  NULL ,
+	[Familia]            varchar(MAX)  NULL ,
+	[Modelo]             varchar(MAX)  NULL ,
+	[Registro_Placa]     varchar(MAX)  NULL ,
+	[Costo_Base]              money  NULL ,
 	[Unidad]             varchar(5)  NULL 
 )
 go
 
 CREATE TABLE [PARTE_EQUIPOS]
 ( 
-	[Id_Parte]           integer  NOT NULL ,
-	[Id_Equipo]          varchar(20)  NOT NULL ,
-	[Id_Partida]         varchar(20)  NOT NULL ,
-	[Fecha]              date  NULL ,
-	[Nro_doc]            varchar(20)  NULL ,
+	[Id_Parte]			varchar(200)  NOT NULL ,
+	[Id_Equipo]         varchar(20)  NOT NULL ,
+	[Id_Partida]        varchar(20)  NOT NULL ,
+	[Fecha]             date  NULL ,
+	[Costo]				float		NULL,
+	[Nro_doc]           varchar(MAX)  NULL ,
 )
 go
 
 CREATE TABLE [Detalle_Parte]
 ( 
-	[Id_Parte]           integer  NOT NULL ,
-	[Id_Equipo]          varchar(20)  NOT NULL ,
-
+	[Id_Parte]           varchar(200)  NOT NULL ,
+	
 	[Inicio]             NUMERIC(10,2) NULL ,
 	[Fin]                NUMERIC(10,2)  NULL ,
 	[Cantidad]           AS [Fin]-[Inicio],
@@ -247,19 +261,17 @@ go
 
 ---===============================================
 ---GENERAR TABLAS GRUPO ALMACEN
----Se actualizo tipo de dato [Stock]  float
----[Stock] deberia actualizarse con una consulta de los consumos
 ---===============================================
 
 CREATE TABLE [MATERIALES]
 ( 
-	[Id_Material]        varchar(20)  NOT NULL ,
-
-	[Descripcion]        varchar(20)  NULL ,
-	[Und]                char(5)  NULL ,
+	[Id_Material]        varchar(20)	NOT NULL ,
+	[IU]				 varchar(20)	NULL,
+	[Descripcion]        varchar(MAX)	NULL ,
+	[Und]                char(5)		NULL ,
 	[Stock]              NUMERIC(10,2)  NULL ,
-	[Almacen]            varchar(20)  NULL ,
-	[PU]                 money  NULL 
+	[Almacen]            varchar(MAX)	NULL ,
+	[PU]                 money			NULL 
 )
 go
 
@@ -275,8 +287,8 @@ go
 
 CREATE TABLE [Detalle_Almacen]
 ( 
-	[Id_Nota]            varchar(20)  NOT NULL ,
-	[Id_Material]        varchar(20)  NOT NULL ,
+	[Id_Nota]            varchar(20)	NOT NULL ,
+	[Id_Material]        varchar(20)	NULL ,
 
 	[Cantidad]           NUMERIC(10,2)  NULL ,
 
@@ -285,10 +297,6 @@ go
 
 ---===============================================
 ---GENERAR TABLAS GRUPO PERSONAL
----Se actualizo tamaño del varchar(120)
----[HH] = [Ingreso]-[Salida], ademas solo deberia ser
----horas normales, si HH>8.5 deberia actualizar HE con
----la diferencia  >>> esto falta
 ---===============================================
 
 CREATE TABLE [PERSONAL]
@@ -310,7 +318,7 @@ go
 CREATE TABLE [TAREO_MO]
 ( 
 	[Id_Tareo]           varchar(20)  NOT NULL ,
-	[Id_Partida]		 varchar(20)  NOT NULL ,
+	[Id_Partida]		 varchar(20)  NULL ,
 
 	[Fecha]              date  NULL ,
 	[Nro_Docummento]     varchar(20)  NULL 
@@ -322,8 +330,8 @@ CREATE TABLE [Detalle_Tareo]
 	[Id_Tareo]           varchar(20)  NOT NULL ,
 	[Id_Personal]        varchar(20)  NOT NULL,
 
-	[Ingreso]            numeric(3,2)  NULL ,
-	[Salida]             numeric(3,2)  NULL ,
+	[Ingreso]            float  NULL ,
+	[Salida]             float  NULL ,
 	[HH]                 AS [Ingreso]-[Salida],
 	[HE]                 float  NULL ,
  
