@@ -19,12 +19,6 @@ ALTER TABLE [PROYECTO]
 	ADD CONSTRAINT [XPKPROYECTO] PRIMARY KEY  CLUSTERED ([Id_Proyecto] ASC)
 go
 
-
-EXEC sp_help [PROYECTO];
-go
-
-
-
 -- ======================================================
 -- DEFINIR RELACIONES BLOQUE PROYECTO
 -- ======================================================

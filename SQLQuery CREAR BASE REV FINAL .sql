@@ -89,8 +89,6 @@ BEGIN
 END
 GO
 
-
-
 IF( EXISTS ( SELECT 1 FROM sys.sysobjects 
 	WHERE name='MATERIALES' and xtype = 'u') )
 BEGIN
