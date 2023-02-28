@@ -40,7 +40,6 @@ DELETE FROM COMPONENTE;
 --- CONSULTAR EL PRESUPUESTO DE UN PROYECTO
 ---====================================================================
 
-
 SELECT
 	PRO.Nombre AS PROYECTO,
 	COMP.Cod_Componente			AS CODIGO,
@@ -87,6 +86,35 @@ GROUP BY
 GO
 
 ---====================================================================
+--- CONSULTAR LOS PARTES DIARIOS DE USO DE EQUIPOS
+---====================================================================
+
+SELECT 
+    PAR.Descripcion_Partida AS PARTIDA,
+	SUM(DET.Cantidad*PARTE.Costo) AS COSTO
+
+FROM EQUIPO AS EQP
+    INNER JOIN PARTE_EQUIPOS AS PARTE ON EQP.Id_Equipo=PARTE.Id_Equipo
+    INNER JOIN Detalle_Parte AS DET   ON PARTE.Id_Parte=DET.Id_Parte
+	INNER JOIN PARTIDA		 AS PAR   ON PARTE.Id_Partida=PAR.Id_Partida
+GROUP BY 
+    PAR.Descripcion_Partida,
+	PARTE.Costo
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+---====================================================================
 --- Borrar contenido de una tabla
 ---====================================================================
 
@@ -102,9 +130,9 @@ SELECT
 	PAR.Descripcion_Partida,
 	ALM.Id_Material,
 	MAT.Descripcion,
-	MAT.PU,
+	MAT.PU						AS [S/. PU],
 	SUM(ALM.Cantidad)			AS CANTIDAD,
-	SUM(MAT.PU*ALM.Cantidad)	AS COSTO
+	ROUND(SUM(MAT.PU*ALM.Cantidad),2)	AS [S/. COSTO]
 
 FROM NOTA_ALMACEN AS NOTA
 	INNER JOIN Detalle_Almacen	AS ALM ON NOTA.Id_Nota=ALM.Id_Nota
@@ -141,7 +169,7 @@ GROUP BY
 	PER.Categoria				,
 	PAR.Descripcion_Partida		,
 	MO.Nro_Docummento			,
-	--TAR.Id_Personal				,
+	--TAR.Id_Personal			,
 	PER.Salario	
 ORDER BY 
 	PAR.Descripcion_Partida
